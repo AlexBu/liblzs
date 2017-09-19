@@ -329,3 +329,70 @@ void lzs_decode(unsigned char *in, unsigned char *out, unsigned int *lengthin, u
     *lengthout = outmove - out;
 
 }
+
+int lzs_encode_file(char* in_filename, char* out_filename)
+{
+    FILE *infile, *outfile;
+    unsigned char *in, *out;
+    unsigned int lengthin = 0, lengthout = 0;
+
+    infile = fopen(in_filename, "rb");
+    outfile = fopen(out_filename, "wb");
+    if(infile == NULL || outfile == NULL)
+        return -1;
+
+    fseek(infile, 0, SEEK_END);
+    lengthin = ftell(infile);
+    fseek(infile, 0, SEEK_SET);
+    in = new unsigned char[lengthin];
+    out = new unsigned char[lengthin*8];
+    fread(in, 1, lengthin, infile);
+
+    lzs_encode(in,out,&lengthin,&lengthout);
+
+    fwrite(out, 1, lengthout, outfile);
+
+    fflush(infile);
+    fflush(outfile);
+
+    fclose(infile);
+    fclose(outfile);
+
+    delete []in;
+    delete []out;
+    return 0;
+}
+
+int lzs_decode_file(char* in_filename, char* out_filename)
+{
+    FILE *infile, *outfile;
+    unsigned char *in, *out;
+    unsigned int lengthin = 0, lengthout = 0;
+
+    infile = fopen(in_filename, "rb");
+    outfile = fopen(out_filename, "wb");
+    if(infile == NULL || outfile == NULL)
+        return -1;
+
+    fseek(infile, 0, SEEK_END);
+    lengthin = ftell(infile);
+    fseek(infile, 0, SEEK_SET);
+    in = new unsigned char[lengthin];
+    out = new unsigned char[lengthin*8];
+    fread(in, 1, lengthin, infile);
+
+    lzs_decode(in,out,&lengthin,&lengthout);
+
+    fwrite(out, 1, lengthout, outfile);
+
+    fflush(infile);
+    fflush(outfile);
+
+    fclose(infile);
+    fclose(outfile);
+
+    delete []in;
+    delete []out;
+    return 0;
+}
+
